@@ -69,7 +69,7 @@ We will continue using personal freedom scores, `pf_score`, as the response vari
 Create a new R code chunk below, with an appropriate title, that does the following:
 
 - Review the about page of the data set and select at least one additional numeric variables (hint: look for `<dbl>` or `<int>` designations) to describe its distribution. Remember to write your description.
-- You may also wish to do this for `pf_score` and `pf_expression_control` again to help you remember what you noticed last week.
+- You may also wish to do this for `pf_score` and `pf_expression_control` again to help you remember what you noticed last week
 
 ## Pairwise relationships
 
