@@ -64,6 +64,21 @@ Create a new R code chunk below that is titled `load-data` and reads in the abov
 - Assign this data set into a data frame named `hfi` (short for "Human Freedom Index").
 - Filter the data `hfi` data frame for year 2016 and assigns the result to an R data object named `hfi_2016`. You will use `hfi_2016` for the remainder of this activity.
 
+```{r loading-data}
+#hfi <- read.csv('hfi.csv')
+#hfi = readr::read_tsv("https://www.openintro.org/data/tab-delimited/hfi.txt")
+readr::read_tsv
+hfi_2016 <- hfi |>
+  filter(year == 2016)
+hfi_2016
+```
+
+```{r}
+glimpse(hfi_2016)
+```
+
+
+
 We will continue using personal freedom scores, `pf_score`, as the response variable and build on our model that had `pf_expression_control` as the explanatory variable. 
 
 Create a new R code chunk below, with an appropriate title, that does the following:
@@ -101,9 +116,9 @@ Now, we will obtain graphical and numerical summaries to describe the pairwise r
 - Replace `explanatory` in the `select` line with the variable you identified above
 - Run your code chunk or knit your document.
   
-```{verbatim pairs-plot}
+```{r pairs-plot}
 hfi_2016 %>% 
-  select(pf_score, pf_expression_control, explanatory) %>% 
+  select(pf_score, pf_expression_control, ef_legal) %>% 
   ggpairs()
 ```
 
