@@ -153,7 +153,7 @@ $$
 - Replace `explanatory`, similarly to what you did in your `pairs-plot` R code chunk.
 - Run your code chunk or knit your document.
   
-```{verbatim mlr-model}
+```{r mlr-model}
 #fit the mlr model
 lm_spec <- linear_reg() %>%
   set_mode("regression") %>%
@@ -162,7 +162,7 @@ lm_spec <- linear_reg() %>%
 lm_spec
 
 mlr_mod <- lm_spec %>% 
-fit(pf_score ~ pf_expression_control + explanatory, data = hfi_2016)
+fit(pf_score ~ pf_expression_control + ef_legal, data = hfi_2016)
 
 # model output
 tidy(mlr_mod)
@@ -191,11 +191,42 @@ Ideally, this would be something that plays nicely with (looks similar to) `{ggp
 
 - Create a new R code chunk, with a descriptive name, and add your code to create this plot.
 
+```{r}
+library(ggplot2)
+library(plotly)
+
+two_d <- ggplot(hfi_2016, aes(x = pf_expression_control, y = pf_score, color = pf_rank)) +
+  geom_point(size = 2) +
+  labs(title = "3D Scatter Plot",
+       x = "Weight",
+       y = "Miles per Gallon",
+       color = "Horsepower")
+# Convert ggplot to plotly object for 3D plotting
+ggplotly(two_d) %>%
+  layout(
+    scene = list(
+      xaxis = list(title = 'Weight'),
+      yaxis = list(title = 'Miles per Gallon'),
+      zaxis = list(title = 'Horsepower')
+    )
+  )
+
+# Create a 3D scatter plot
+fig <- plot_ly(hfi_2016, x = ~pf_expression_control, y = ~pf_score, z = ~pf_rank, type = 'scatter3d', mode = 'markers')
+
+fig
+
+```
+
+
 After doing this, respond to the following prompt:
 
 6. Compare your 3-D scatterplot and the `GGally::ggpairs` output.
   Comment on the strengths and weaknesses of these two visualizations.
   Do both display on GitHub when you push your work there?
+  
+  I think I like looking at the GGpairs output more than 3d visual. 3D can be difficult to interpret. Additionally Git has difficulty loading 3d images. 
+
 
 # Day 2
 
@@ -224,7 +255,7 @@ Fortunately, we can create our own.
 - In the code chunk below titled `binary-pred`, replace "verbatim" with "r" just before the code chunk title.
 - Run your code chunk or knit your document.
   
-```{verbatim binary-pred}
+```{r binary-pred}
 hfi_2016 <- hfi_2016 %>%
   mutate(west_atlantic = if_else(
     region %in% c("North America", "Latin America & the Caribbean"),
@@ -235,11 +266,13 @@ hfi_2016 <- hfi_2016 %>%
 
 7. What is happening in the above code? What new variable did we create? How do you know it is new? What values does it take when?
 
+Based on the table, it looks like the binary indicator was assigned YES if the region is NOT Latin America and The Caribbean. 
+
 
 - In the code chunk below titled `qual-mlr`, replace "verbatim" with "r" just before the code chunk title.
 - Run your code chunk or knit your document.
 
-```{verbatim qual-mlr}
+```{r qual-mlr}
 # review any visual patterns
 hfi_2016 %>% 
   select(pf_score, west_atlantic, pf_expression_control) %>% 
@@ -268,13 +301,13 @@ Also, when looking at your model (`tidy`) output, the `term` label for your qual
 Answer the following questions:
 
 8. What is the label that R assigned to this explanatory variable `term`?
-
+It looks like the west_atlantic is only looking at "Yes".. I'm not sure if that impacts things? 
 
 9. What information is represented here?
-
+^^ Stated above. 
 
 10. What information is missing here?
-
+It looks like the Latin America regions would be missing
 
 Your are essentially fitting two models (or $k$ models, where $k$ is the number of levels in your qualitative variable).
 From your reading, you learned that R is creating an indicator variable (see p. 83).
@@ -288,11 +321,27 @@ Use `?relevel` to learn more.
 
 11. Write the estimated equation for your MLR model with a qualitative explanatory variable.
 
+y = 4.377 + -.1 \times \text{west_atlanticYES} + .54 \times \text{pf_expression_control} + \varepsilon
+
 
 12. Now, for each level of your qualitative variable, write the simplified equation of the estimated line for that level. 
   Note that if your qualitative variable has two levels, you should have two simplified equations.
 
+```{r}
 
+
+hfi_2016_update<- hfi_2016|>
+  mutate(west_atlantic = factor(west_atlantic, levels = c("Yes", "No")))
+
+qual_mod <- lm_spec %>% 
+  fit(pf_score ~ west_atlantic + pf_expression_control, data = hfi_2016_update)
+
+# model output
+tidy(qual_mod)
+
+# By including char drawing sep lines for each of the categories. When not west of atlantic .1 higher than when it IS west of the atlantic. (Keeps it constant)
+
+```
 
 The interpretation of the coefficients (parameter estimates) in multiple regression is slightly different from that of simple regression.
 The estimate for the indicator variable reflects how much more a group is expected to be if something has that quality, *while holding all other variables constant*.
@@ -304,12 +353,31 @@ Page 83 of the text can help here (or have me come chat with you).
 
 14. Interpret the parameter estimate for your quantitative variable in the context of your problem.
 
+By including char drawing sep lines for each of the categories. When not west of atlantic .1 higher than when it IS west of the atlantic. (Keeps it constant)
+
 
 ## Challenge: Multiple levels
 
 Below, create a new R code chunk (with a descriptive name) that fits a new model with the same response (`pf_score`) and quantitative explanatory variable (`pf_expression_control`), but now use a qualitative variable with more than two levels (say, `region`) and obtain the `tidy` model output.
 How does R appear to handle categorical variables with more than two levels?
 
+```{r}
+
+
+hfi_2016_update<- hfi_2016|>
+  mutate(west_atlantic = factor(west_atlantic, levels = c("Yes", "No")))
+
+qual_mod <- lm_spec |> 
+  fit(pf_score ~ region + pf_expression_control, data = hfi_2016_update)
+
+# model output
+tidy(qual_mod)
+
+# By including char drawing sep lines for each of the categories. When not west of atlantic .1 higher than when it IS west of the atlantic. (Keeps it constant)
+
+```
+
+It looks like every region is included into the model which is interesting.. I think it would be a bit difficult to interpret. 
 
 
 # Day 3
@@ -345,7 +413,7 @@ $$
 - In the code chunk below titled `int-mlr`, replace "verbatim" with "r" just before the code chunk title.
 - Run your code chunk or knit your document.
 
-```{verbatim int-mlr}
+```{r int-mlr}
 # review any visual patterns
 hfi_2016 %>% 
   select(pf_score, west_atlantic, pf_expression_control) %>% 
@@ -393,7 +461,7 @@ One way to check this is to build our null model (no predictors) and then compar
 
 - In the code chunk below titled `mod-comp`, replace "verbatim" with "r" just before the code chunk title.
   
-```{verbatim mod-comp}
+```{r mod-comp}
 # null model
 null_mod <- lm_spec %>% 
 fit(response ~ 1, data = data)
