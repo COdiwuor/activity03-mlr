@@ -65,7 +65,7 @@ Create a new R code chunk below that is titled `load-data` and reads in the abov
 - Filter the data `hfi` data frame for year 2016 and assigns the result to an R data object named `hfi_2016`. You will use `hfi_2016` for the remainder of this activity.
 
 ```{r loading-data}
-#hfi <- read.csv('hfi.csv')
+hfi <- read.csv('hfi.csv')
 #hfi = readr::read_tsv("https://www.openintro.org/data/tab-delimited/hfi.txt")
 readr::read_tsv
 hfi_2016 <- hfi |>
@@ -132,10 +132,12 @@ After running the `pairs-plot` code, answer the following questions:
 
 1. For each pair of variables, how would you describe the relationship graphically?
   Do any of the relationships look linear?
+  **The relationship is linear**
   Are there any interesting/odd features (outliers, non-linear patterns, etc.)?
+  **There are no interesting /odd features**
 
 2. For each pair of variables, how would you describe the relationship numerically?
-
+**The relationship is continuous**
 3. Are your two explanatory variables collinear (correlated)?
   Essentially, this means that adding more than one of these variables to the model would not add much value to the model.
   We will talk more on this issue in Activity 4 (other considerations in regression models).
@@ -224,7 +226,7 @@ After doing this, respond to the following prompt:
 6. Compare your 3-D scatterplot and the `GGally::ggpairs` output.
   Comment on the strengths and weaknesses of these two visualizations.
   Do both display on GitHub when you push your work there?
-  
+  **If i push the code to github it does not display but it will display if i push the knitted version of the R code.**
   I think I like looking at the GGpairs output more than 3d visual. 3D can be difficult to interpret. Additionally Git has difficulty loading 3d images. 
 
 
